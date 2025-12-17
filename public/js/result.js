@@ -70,6 +70,16 @@ class ResultPage {
     // AI评价
     this.animateScore(analysis.beautyScore);
     this.typewriterEffect('temperament', analysis.temperament, 50);
+    
+    // 详细评价
+    if (analysis.evaluation) {
+      this.renderEvaluation(analysis.evaluation);
+    }
+    
+    // 五官分析
+    if (analysis.facialFeatures) {
+      this.renderFacialFeatures(analysis.facialFeatures);
+    }
 
     // 健康分析
     this.renderHealthAnalysis(analysis.healthAnalysis);
@@ -137,6 +147,54 @@ class ResultPage {
           }, 50);
         }, index * 200);
       });
+    }
+  }
+
+  /**
+   * 渲染评价
+   */
+  renderEvaluation(evaluation) {
+    const evaluationEl = document.getElementById('evaluation');
+    if (evaluationEl) {
+      const textEl = evaluationEl.querySelector('.evaluation-text');
+      if (textEl) {
+        // 直接在段落元素上实现打字机效果
+        const safeText = typeof evaluation === 'string' ? evaluation : String(evaluation ?? '');
+        textEl.textContent = '';
+        let index = 0;
+        const type = () => {
+          if (index < safeText.length) {
+            textEl.textContent += safeText[index];
+            index++;
+            setTimeout(type, 30);
+          }
+        };
+        setTimeout(type, 1000);
+      }
+    }
+  }
+
+  /**
+   * 渲染五官分析
+   */
+  renderFacialFeatures(facialFeatures) {
+    const featuresEl = document.getElementById('facialFeatures');
+    if (featuresEl) {
+      const textEl = featuresEl.querySelector('.features-text');
+      if (textEl) {
+        // 直接在段落元素上实现打字机效果
+        const safeText = typeof facialFeatures === 'string' ? facialFeatures : String(facialFeatures ?? '');
+        textEl.textContent = '';
+        let index = 0;
+        const type = () => {
+          if (index < safeText.length) {
+            textEl.textContent += safeText[index];
+            index++;
+            setTimeout(type, 30);
+          }
+        };
+        setTimeout(type, 1200);
+      }
     }
   }
 
