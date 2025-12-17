@@ -1,0 +1,524 @@
+/* 全局样式 - Sci-Fi HUD Theme */
+:root {
+  --primary-color: #00f7ff;
+  --secondary-color: #00ff88;
+  --accent-color: #ff6b00;
+  --bg-color: #0a0a1a;
+  --glass-bg: rgba(0, 247, 255, 0.05);
+  --glass-border: rgba(0, 247, 255, 0.3);
+  --text-main: #e0faff;
+  --font-tech: 'Orbitron', 'Courier New', monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-tech);
+  background: var(--bg-color);
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* 背景网格特效 */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    linear-gradient(rgba(0, 247, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 247, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* 扫描线背景 */
+.background-scanner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 247, 255, 0.02) 50%,
+    transparent 100%
+  );
+  animation: backgroundScan 8s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes backgroundScan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+/* HUD 装饰边框 */
+.hud-border {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.corner {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 0 10px var(--primary-color);
+}
+
+.top-left { top: 20px; left: 20px; border-right: none; border-bottom: none; }
+.top-right { top: 20px; right: 20px; border-left: none; border-bottom: none; }
+.bottom-left { bottom: 20px; left: 20px; border-right: none; border-top: none; }
+.bottom-right { bottom: 20px; right: 20px; border-left: none; border-top: none; }
+
+/* 头部样式 */
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+  padding: 20px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 4px;
+  backdrop-filter: blur(5px);
+}
+
+.header::before, .header::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: var(--primary-color);
+  box-shadow: 0 0 10px var(--primary-color);
+}
+.header::before { top: -5px; left: -5px; }
+.header::after { bottom: -5px; right: -5px; }
+
+.title {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-shadow: 0 0 20px rgba(0, 247, 255, 0.5);
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--secondary-color);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* 主内容区域 */
+.main-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* 摄像头区域 */
+.camera-section {
+  background: rgba(0, 10, 20, 0.6);
+  border: 1px solid var(--glass-border);
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  padding: 5px;
+  box-shadow: 0 0 30px rgba(0, 247, 255, 0.1);
+}
+
+/* 装饰角标 */
+.tech-corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: var(--primary-color);
+  border-style: solid;
+  pointer-events: none;
+  z-index: 5;
+}
+.tl { top: -2px; left: -2px; border-width: 2px 0 0 2px; }
+.tr { top: -2px; right: -2px; border-width: 2px 2px 0 0; }
+.bl { bottom: -2px; left: -2px; border-width: 0 0 2px 2px; }
+.br { bottom: -2px; right: -2px; border-width: 0 2px 2px 0; }
+
+.camera-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 75%; /* 4:3 Aspect Ratio */
+  background: #000;
+  overflow: hidden;
+  border: 1px solid rgba(0, 247, 255, 0.2);
+}
+
+.video-preview {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 100%;
+  min-height: 100%;
+  object-fit: cover;
+  filter: sepia(10%) hue-rotate(180deg) saturate(1.2) contrast(1.1); /* 轻微的冷色调滤镜 */
+}
+
+/* 摄像头网格遮罩 */
+.camera-grid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: 
+    linear-gradient(rgba(0, 247, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 247, 255, 0.1) 1px, transparent 1px);
+  background-size: 100px 100px;
+  z-index: 2;
+  box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* 人脸扫描框指导 */
+.face-guide {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 220px;
+  height: 280px;
+  border: 2px solid rgba(0, 255, 136, 0.3);
+  border-radius: 4px; /* 更方形的科技感 */
+}
+
+/* 扫描动画 */
+.face-guide::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--secondary-color);
+  box-shadow: 0 0 10px var(--secondary-color);
+  animation: scanFace 2s ease-in-out infinite;
+}
+
+@keyframes scanFace {
+  0% { top: 0; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* 倒计时 */
+.countdown {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 100px;
+  font-family: var(--font-tech);
+  font-weight: bold;
+  color: var(--primary-color);
+  text-shadow: 0 0 30px var(--primary-color);
+  z-index: 10;
+}
+
+/* 状态提示 */
+.camera-status {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: 8px 20px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  z-index: 5;
+}
+
+/* 控制按钮区 */
+.controls {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border-top: 1px solid rgba(0, 247, 255, 0.2);
+}
+
+/* 科技感按钮 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 30px;
+  border: 1px solid var(--primary-color);
+  background: rgba(0, 247, 255, 0.1);
+  color: var(--primary-color);
+  font-family: var(--font-tech);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--primary-color);
+  color: #000;
+  box-shadow: 0 0 20px rgba(0, 247, 255, 0.6);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #555;
+  color: #555;
+}
+
+.btn-primary {
+  border-color: var(--secondary-color);
+  color: var(--secondary-color);
+  background: rgba(0, 255, 136, 0.1);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--secondary-color);
+  color: #000;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+}
+
+.btn-icon {
+  font-size: 18px;
+}
+
+/* 预览区域 */
+.preview-section {
+  width: 100%;
+  max-width: 800px;
+  background: rgba(0, 10, 20, 0.8);
+  border: 1px solid var(--accent-color);
+  padding: 5px;
+  position: relative;
+}
+
+.preview-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 75%;
+}
+
+.preview-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 1px solid rgba(255, 107, 0, 0.3);
+}
+
+.preview-actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* 加载动画 - 科技雷达 */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 10, 26, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(10px);
+}
+
+.loading-content {
+  text-align: center;
+  color: var(--primary-color);
+}
+
+.loading-spinner {
+  width: 100px;
+  height: 100px;
+  border: 2px solid rgba(0, 247, 255, 0.3);
+  border-radius: 50%;
+  position: relative;
+  margin: 0 auto 30px;
+  background: radial-gradient(circle, rgba(0, 247, 255, 0.1) 0%, transparent 70%);
+}
+
+.loading-spinner::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: 2px;
+  background: var(--primary-color);
+  transform-origin: left center;
+  animation: radarSpin 1.5s linear infinite;
+  box-shadow: 0 0 10px var(--primary-color);
+}
+
+@keyframes radarSpin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-family: var(--font-tech);
+  font-size: 16px;
+  letter-spacing: 3px;
+  animation: blink 1s infinite alternate;
+}
+
+@keyframes blink {
+  from { opacity: 0.5; }
+  to { opacity: 1; }
+}
+
+/* 错误提示 */
+.error-toast {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  width: 300px;
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid #ff003c;
+  color: #ff003c;
+  box-shadow: 0 0 20px rgba(255, 0, 60, 0.2);
+  padding: 15px;
+  z-index: 10000;
+  font-family: var(--font-tech);
+}
+
+.error-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.error-close {
+  background: transparent;
+  border: 1px solid #ff003c;
+  color: #ff003c;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 权限弹窗 */
+.permission-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: rgba(10, 20, 30, 0.9);
+  border: 1px solid var(--primary-color);
+  padding: 40px;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 0 50px rgba(0, 247, 255, 0.2);
+  position: relative;
+}
+
+.modal-content::before {
+  content: 'ACCESS REQUEST';
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background: #0a141e;
+  padding: 0 10px;
+  color: var(--primary-color);
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.modal-content h2 {
+  color: var(--primary-color);
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.modal-content p {
+  color: #aaa;
+  margin-bottom: 30px;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .title { font-size: 24px; }
+  .controls { flex-direction: column; }
+  .btn { width: 100%; }
+}

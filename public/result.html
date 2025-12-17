@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NXNS 分析结果 - 云匹配识别系统</title>
+  <link rel="stylesheet" href="css/result.css">
+</head>
+<body>
+  <div class="hud-container">
+    <!-- HUD 边框装饰 -->
+    <div class="hud-border">
+      <div class="corner top-left"></div>
+      <div class="corner top-right"></div>
+      <div class="corner bottom-left"></div>
+      <div class="corner bottom-right"></div>
+    </div>
+
+    <!-- 头部信息 -->
+    <header class="hud-header">
+      <div class="header-title">
+        <h1 class="system-name">NXNS 云匹配识别系统</h1>
+        <p class="analysis-status">分析完成</p>
+      </div>
+      <div class="timestamp" id="timestamp"></div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="hud-main">
+      <!-- 照片对比区 -->
+      <section class="photo-comparison">
+        <div class="photo-card user-photo">
+          <div class="card-header">
+            <span class="card-label">您的照片</span>
+            <span class="pulse-dot"></span>
+          </div>
+          <div class="photo-frame">
+            <img id="userPhoto" src="" alt="用户照片">
+            <div class="scan-line"></div>
+          </div>
+        </div>
+
+        <div class="vs-divider">
+          <span class="vs-text">VS</span>
+        </div>
+
+        <div class="photo-card celebrity-photo">
+          <div class="card-header">
+            <span class="card-label">匹配明星</span>
+            <span class="pulse-dot"></span>
+          </div>
+          <div class="photo-frame">
+            <img id="celebrityPhoto" src="" alt="明星照片">
+            <div class="scan-line"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 分析数据区 -->
+      <section class="analysis-data">
+        <!-- 基础信息 -->
+        <div class="data-panel">
+          <h2 class="panel-title">
+            <span class="panel-icon">👤</span>
+            基础信息
+          </h2>
+          <div class="data-grid">
+            <div class="data-item">
+              <span class="data-label">性别</span>
+              <span class="data-value" id="gender">-</span>
+            </div>
+            <div class="data-item">
+              <span class="data-label">年龄</span>
+              <span class="data-value" id="age">-</span>
+            </div>
+            <div class="data-item">
+              <span class="data-label">眼镜</span>
+              <span class="data-value" id="glasses">-</span>
+            </div>
+            <div class="data-item">
+              <span class="data-label">笑容</span>
+              <span class="data-value" id="smile">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI 评价 -->
+        <div class="data-panel">
+          <h2 class="panel-title">
+            <span class="panel-icon">🤖</span>
+            AI 智能评价
+          </h2>
+          <div class="score-container">
+            <div class="score-circle">
+              <canvas id="scoreCanvas" width="120" height="120"></canvas>
+              <div class="score-text">
+                <span class="score-number" id="beautyScore">-</span>
+                <span class="score-label">颜值评分</span>
+              </div>
+            </div>
+          </div>
+          <div class="temperament" id="temperament">
+            <span class="temperament-text">分析中...</span>
+          </div>
+        </div>
+
+        <!-- 健康分析 -->
+        <div class="data-panel">
+          <h2 class="panel-title">
+            <span class="panel-icon">💊</span>
+            健康分析
+          </h2>
+          <div class="health-data">
+            <div class="complexion" id="complexion">
+              <span class="complexion-label">气色：</span>
+              <span class="complexion-value">-</span>
+            </div>
+            <div class="suggestions" id="suggestions">
+              <div class="suggestion-item">• 建议加载中...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 明星匹配 -->
+        <div class="data-panel">
+          <h2 class="panel-title">
+            <span class="panel-icon">⭐</span>
+            明星匹配
+          </h2>
+          <div class="celebrity-match">
+            <div class="match-info">
+              <div class="match-name">
+                <span class="name-label">最像的明星：</span>
+                <span class="name-value" id="celebrityName">-</span>
+              </div>
+              <div class="match-similarity">
+                <span class="similarity-label">相似度：</span>
+                <span class="similarity-value" id="similarity">-</span>
+              </div>
+            </div>
+            <div class="match-reason" id="matchReason">
+              <span class="reason-text">匹配原因加载中...</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 底部操作区 -->
+    <footer class="hud-footer">
+      <button class="hud-btn primary" id="retakeBtn">
+        <span class="btn-icon">🔄</span>
+        <span class="btn-text">重新测试</span>
+      </button>
+      <button class="hud-btn secondary" id="shareBtn">
+        <span class="btn-icon">📤</span>
+        <span class="btn-text">分享结果</span>
+      </button>
+    </footer>
+
+    <!-- 扫描线背景 -->
+    <div class="background-scanner"></div>
+  </div>
+
+  <!-- 加载动画 -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-content">
+      <div class="loading-scanner">
+        <div class="scanner-line"></div>
+      </div>
+      <p class="loading-text">正在加载数据...</p>
+    </div>
+  </div>
+
+  <!-- 脚本 -->
+  <script src="js/result.js"></script>
+</body>
+</html>
