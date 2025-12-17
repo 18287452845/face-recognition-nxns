@@ -1,0 +1,56 @@
+/* Global interaction + haptic/click animation helpers */
+
+:root {
+  --tap-scale: 0.975;
+  --tap-glow: rgba(0, 247, 255, 0.35);
+  --tap-glow-accent: rgba(255, 107, 0, 0.35);
+}
+
+.tap-target {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  position: relative;
+}
+
+.tap-target.is-pressed {
+  transform: translateY(1px) scale(var(--tap-scale));
+  filter: brightness(1.12);
+}
+
+.tap-ripple {
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.45) 0%, rgba(0, 247, 255, 0.25) 35%, rgba(0, 247, 255, 0) 70%);
+  mix-blend-mode: screen;
+  animation: tapRipple 520ms ease-out;
+}
+
+.tap-target[data-tap-color="accent"] .tap-ripple {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.35) 0%, rgba(255, 107, 0, 0.25) 35%, rgba(255, 107, 0, 0) 70%);
+}
+
+@keyframes tapRipple {
+  0% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(0.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tap-target.is-pressed {
+    transform: none;
+    filter: none;
+  }
+
+  .tap-ripple {
+    animation: none;
+    display: none;
+  }
+}

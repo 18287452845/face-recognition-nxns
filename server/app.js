@@ -37,13 +37,19 @@ if (config.nodeEnv === 'development') {
 // 静态文件服务
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/celebrities', express.static(path.join(__dirname, '../celebrities')));
-app.use(express.static(path.join(__dirname, '../public')));
+// 禁用默认 index.html，避免与启动页路由冲突
+app.use(express.static(path.join(__dirname, '../public'), { index: false }));
 
 // API路由
 app.use('/api', require('./routes/api'));
 
-// 主页路由
-app.get('/', (req, res) => {
+// 启动页路由
+app.get(['/', '/start'], (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/start.html'));
+});
+
+// 扫描页路由
+app.get('/scan', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 

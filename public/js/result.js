@@ -329,15 +329,18 @@ class ResultPage {
    * 打字机效果
    */
   typewriterEffect(elementId, text, speed = 50) {
-    const element = document.getElementById(elementId);
-    if (!element) return;
+    const container = document.getElementById(elementId);
+    if (!container) return;
 
-    element.textContent = '';
+    const target = container.querySelector('span') || container;
+    const safeText = typeof text === 'string' ? text : String(text ?? '');
+
+    target.textContent = '';
     let index = 0;
 
     const type = () => {
-      if (index < text.length) {
-        element.textContent += text[index];
+      if (index < safeText.length) {
+        target.textContent += safeText[index];
         index++;
         setTimeout(type, speed);
       }
@@ -456,7 +459,7 @@ class ResultPage {
    * 重定向到首页
    */
   redirectToHome() {
-    window.location.href = '/';
+    window.location.href = '/scan';
   }
 }
 
