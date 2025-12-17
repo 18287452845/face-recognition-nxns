@@ -11,7 +11,9 @@
       "Bash(powershell:*)",
       "Bash(git init:*)",
       "mcp__github__create_repository",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git reset:*)"
     ]
   }
 }
