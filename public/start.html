@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NXNS 启动界面 // SYSTEM BOOT</title>
+  <link rel="stylesheet" href="css/interaction.css">
+  <link rel="stylesheet" href="css/start.css">
+</head>
+<body>
+  <div class="boot">
+    <video class="boot-video" autoplay muted loop playsinline preload="auto">
+      <source src="images/start.mp4" type="video/mp4">
+    </video>
+
+    <div class="boot-overlay">
+      <div class="boot-grid"></div>
+      <div class="boot-vignette"></div>
+      <div class="boot-scan"></div>
+
+      <div class="boot-hud">
+        <div class="boot-corner tl"></div>
+        <div class="boot-corner tr"></div>
+        <div class="boot-corner bl"></div>
+        <div class="boot-corner br"></div>
+      </div>
+
+      <header class="boot-topbar">
+        <div class="boot-brand">
+          <div class="boot-logo">NXNS</div>
+          <div class="boot-meta">
+            <div class="boot-sub">云匹配识别系统 · Neural Network Identification System</div>
+            <div class="boot-ver">SYSTEM ALPHA / v2.0</div>
+          </div>
+        </div>
+        <div class="boot-status">
+          <div class="status-dot"></div>
+          <div class="status-text" id="bootStatus">BOOTING...</div>
+        </div>
+      </header>
+
+      <main class="boot-main">
+        <div class="boot-panel">
+          <div class="panel-title">INITIALIZATION SEQUENCE</div>
+          <div class="boot-log" id="bootLog" aria-live="polite"></div>
+
+          <div class="boot-progress">
+            <div class="progress-track">
+              <div class="progress-bar" id="progressBar"></div>
+              <div class="progress-glow"></div>
+            </div>
+            <div class="progress-meta">
+              <span class="progress-label">LINK</span>
+              <span class="progress-value" id="progressValue">0%</span>
+            </div>
+          </div>
+
+          <div class="boot-actions">
+            <button class="boot-btn" id="enterBtn" disabled data-tap data-tap-color="accent">
+              <span class="btn-icon">⟡</span>
+              <span class="btn-text">进入系统</span>
+            </button>
+            <button class="boot-btn ghost" id="skipBtn" data-tap>
+              <span class="btn-icon">↳</span>
+              <span class="btn-text">跳过动画</span>
+            </button>
+          </div>
+
+          <div class="boot-hint">提示：点击任意按钮将触发触感反馈（如设备支持）。</div>
+        </div>
+      </main>
+
+      <footer class="boot-footer">
+        <div class="footer-left">SECURE CHANNEL: ENABLED</div>
+        <div class="footer-right" id="bootTime"></div>
+      </footer>
+    </div>
+  </div>
+
+  <script src="js/interaction.js"></script>
+  <script src="js/start.js"></script>
+</body>
+</html>
