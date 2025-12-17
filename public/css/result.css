@@ -450,6 +450,38 @@ body::before {
   color: #c0f0ff;
 }
 
+/* 详细评价 */
+.evaluation {
+  margin-top: 8px;
+  padding: 10px;
+  background: rgba(0, 255, 136, 0.05);
+  border: 1px dashed rgba(0, 255, 136, 0.3);
+  border-radius: 4px;
+}
+
+.evaluation-text {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #00ff88;
+  margin: 0;
+}
+
+/* 五官分析 */
+.facial-features {
+  margin-top: 8px;
+  padding: 10px;
+  background: rgba(255, 107, 0, 0.05);
+  border: 1px dashed rgba(255, 107, 0, 0.3);
+  border-radius: 4px;
+}
+
+.features-text {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #ffaa33;
+  margin: 0;
+}
+
 /* 健康分析 */
 .health-data {
   display: flex;

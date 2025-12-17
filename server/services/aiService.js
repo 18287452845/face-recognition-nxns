@@ -27,19 +27,27 @@ class AiService {
    */
   async analyzeFace(imageBase64) {
     try {
-      const prompt = `请分析这张人脸照片，以JSON格式返回以下信息：
+      const prompt = `请分析这张人脸照片，以JSON格式返回以下信息。评价内容请只包含正面和赞美的内容，要详细具体：
 {
   "gender": "男/女",
   "age": 数字,
   "hasGlasses": true/false,
   "smileLevel": "无笑容/微笑/开心大笑",
   "beautyScore": 1-100的数字,
-  "temperament": "一句话气质描述，如：眼神深邃，气质优雅",
+  "temperament": "详细的气质描述和赞美（如：眼神灵动深邃，散发知性气质，五官精致立体，气场高贵优雅）",
+  "evaluation": "2-3句详细的正面评价和赞美，包括气质、气色、整体印象等各方面",
+  "facialFeatures": "五官特点的详细赞美描述（如：眼睛明亮有神、眼睛轮廓深邃、鼻梁挺直、嘴角上扬等）",
   "healthAnalysis": {
-    "complexion": "气色描述，如：气色红润/略显疲态",
-    "suggestions": ["健康建议1", "健康建议2", "健康建议3"]
-  },
-  "facialFeatures": "五官特点描述"
+    "complexion": "气色的正面描述和赞美（如：气色红润有光泽/皮肤细腻有活力/肤色均匀健康）",
+    "skinCondition": "皮肤状态的正面描述（如：皮肤光滑细腻/面部轮廓清晰/肤质饱满）",
+    "suggestions": [
+      "基于年龄和健康状况的详细健康建议1",
+      "基于气质和体态的健康建议2", 
+      "基于整体状况的健康建议3",
+      "额外的生活方式建议4"
+    ],
+    "strengthPoints": ["优点1", "优点2", "优点3"]
+  }
 }
 只返回JSON，不要其他文字。`;
 
@@ -110,11 +118,22 @@ class AiService {
       }
 
       // 验证结果完整性
-      const requiredFields = ['gender', 'age', 'hasGlasses', 'smileLevel', 'beautyScore'];
+      const requiredFields = ['gender', 'age', 'hasGlasses', 'smileLevel', 'beautyScore', 'evaluation'];
       for (const field of requiredFields) {
         if (analysisResult[field] === undefined) {
           throw new AppError(`AI分析结果缺少必要字段: ${field}`, 500);
         }
+      }
+
+      // 确保healthAnalysis有必要的字段
+      if (!analysisResult.healthAnalysis) {
+        analysisResult.healthAnalysis = {};
+      }
+      if (!analysisResult.healthAnalysis.suggestions) {
+        analysisResult.healthAnalysis.suggestions = [];
+      }
+      if (!analysisResult.healthAnalysis.strengthPoints) {
+        analysisResult.healthAnalysis.strengthPoints = [];
       }
 
       return analysisResult;

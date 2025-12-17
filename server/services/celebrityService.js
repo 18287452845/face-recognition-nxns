@@ -15,15 +15,23 @@ class CelebrityService {
   }
 
   /**
-   * 匹配最相似的名人
-   * @param {string} imageBase64 - Base64编码的用户图片
-   * @param {string} gender - 用户性别
-   * @returns {Promise<Object>} 匹配结果
-   */
+    * 匹配最相似的名人
+    * @param {string} imageBase64 - Base64编码的用户图片
+    * @param {string} gender - 用户性别
+    * @returns {Promise<Object>} 匹配结果
+    */
   async matchCelebrity(imageBase64, gender = null) {
     try {
+      // 确定性别（将中文性别转换为英文）
+      let normalizedGender = gender;
+      if (gender === '女') {
+        normalizedGender = 'female';
+      } else if (gender === '男') {
+        normalizedGender = 'male';
+      }
+
       // 获取对应性别的名人列表
-      const celebrities = await this.getCelebrities(gender);
+      const celebrities = await this.getCelebrities(normalizedGender);
 
       if (celebrities.length === 0) {
         // 如果没有对应性别的名人，返回默认匹配
@@ -31,7 +39,8 @@ class CelebrityService {
           name: '神秘明星',
           photo: null,
           similarity: 0,
-          description: '暂无匹配的明星'
+          description: '暂无匹配的明星',
+          matchReason: '暂无可匹配的明星'
         };
       }
 
@@ -43,23 +52,39 @@ class CelebrityService {
       // 生成随机相似度（65-95之间）
       const similarity = Math.floor(Math.random() * 31) + 65;
 
-      // 生成匹配理由
-      const matchReasons = [
-        '你们有相似的眼神轮廓',
-        '面部特征非常相似',
-        '气质风格相近',
-        '五官比例相似',
-        '笑容特点相似',
-        '整体面部轮廓相似'
+      // 生成更详细的匹配理由
+      const maleReasons = [
+        '你们有相似的眼神轮廓，都充满神采',
+        '面部特征非常相似，气质十分契合',
+        '气质风格相近，都散发男性魅力',
+        '五官比例相似，都很有气场',
+        '笑容特点相似，都很有感染力',
+        '整体面部轮廓相似，都很英俊',
+        '眼神传达的气质很像，都很沉静内敛',
+        '脸部线条相似，骨骼架构相近'
       ];
-      const matchReason = matchReasons[Math.floor(Math.random() * matchReasons.length)];
+
+      const femaleReasons = [
+        '你们有相似的眼神轮廓，都闪闪发光',
+        '面部特征非常相似，气质十分相近',
+        '气质风格相近，都散发女性魅力',
+        '五官比例相似，都很精致优雅',
+        '笑容特点相似，都很甜美有感染力',
+        '整体面部轮廓相似，都很秀气',
+        '眼神传达的气质很像，都很温柔知性',
+        '脸部线条相似，气场和气质相通'
+      ];
+
+      const matchReasonList = normalizedGender === 'female' ? femaleReasons : maleReasons;
+      const matchReason = matchReasonList[Math.floor(Math.random() * matchReasonList.length)];
 
       return {
         name: selectedCelebrity.name,
-        photo: `/celebrities/${gender}/${selectedCelebrity.filename}`,
+        photo: `/celebrities/${normalizedGender}/${selectedCelebrity.filename}`,
         similarity: similarity,
         description: selectedCelebrity.description || '著名明星',
-        matchReason: matchReason
+        matchReason: matchReason,
+        gender: normalizedGender
       };
 
     } catch (error) {
@@ -69,7 +94,8 @@ class CelebrityService {
         name: '神秘明星',
         photo: null,
         similarity: 0,
-        description: '暂无匹配的明星'
+        description: '暂无匹配的明星',
+        matchReason: '暂无可匹配的明星'
       };
     }
   }
