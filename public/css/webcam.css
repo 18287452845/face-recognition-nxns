@@ -193,7 +193,7 @@ body::before {
   min-width: 100%;
   min-height: 100%;
   object-fit: cover;
-  filter: sepia(10%) hue-rotate(180deg) saturate(1.2) contrast(1.1); /* 轻微的冷色调滤镜 */
+  /* 移除所有滤镜，保持自然色彩 */
 }
 
 /* 摄像头网格遮罩 */

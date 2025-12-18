@@ -165,7 +165,8 @@ const translations = {
 
 class I18n {
   constructor() {
-    this.lang = localStorage.getItem('nxns_lang') || 'zh-CN';
+    // 强制使用中文，不从localStorage读取
+    this.lang = 'zh-CN';
     this.observers = [];
     
     // Initialize on DOMContentLoaded
@@ -177,7 +178,8 @@ class I18n {
   }
 
   init() {
-    this.renderLanguageSwitch();
+    // 不渲染语言切换按钮，强制使用中文
+    // this.renderLanguageSwitch();
     this.updatePage();
   }
 
