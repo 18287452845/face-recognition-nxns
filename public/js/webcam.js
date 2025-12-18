@@ -21,8 +21,15 @@ class WebcamController {
     this.retakeBtn = document.getElementById('retakeBtn');
     this.cameraStatus = document.getElementById('cameraStatus');
     this.statusText = document.getElementById('statusText');
+    
+    // Loading elements
     this.loadingOverlay = document.getElementById('loadingOverlay');
     this.loadingText = document.getElementById('loadingText');
+    this.loadingBar = document.getElementById('loadingBar');
+    this.loadingPercent = document.getElementById('loadingPercent');
+    this.systemLogs = document.getElementById('systemLogs');
+    this.loadingInterval = null;
+
     this.errorToast = document.getElementById('errorToast');
     this.errorMessage = document.getElementById('errorMessage');
     this.errorClose = document.getElementById('errorClose');
@@ -312,7 +319,8 @@ class WebcamController {
       return;
     }
 
-    this.showLoading(this.t('analyzing', '正在分析人脸特征...'));
+    // 启动赛博朋克加载序列
+    this.startLoadingSequence();
 
     try {
       const lang = window.i18n ? window.i18n.getLanguage() : 'zh-CN';
@@ -330,6 +338,12 @@ class WebcamController {
       const result = await response.json();
 
       if (result.success) {
+        // 完成加载条
+        this.completeLoading();
+        
+        // 延迟跳转以展示完成状态
+        await this.sleep(800);
+
         // 将结果存储到sessionStorage供结果页使用
         sessionStorage.setItem('analysisResult', JSON.stringify(result.data));
         
@@ -341,14 +355,102 @@ class WebcamController {
         // 跳转到结果页
         window.location.href = '/result';
       } else {
+        this.hideLoading();
         this.showError(result.message || this.t('analysis_failed', '分析失败'));
       }
     } catch (error) {
+      this.hideLoading();
       console.error('分析请求失败:', error);
       this.showError(this.t('network_error', '网络错误，请稍后重试'));
-    } finally {
-      this.hideLoading();
     }
+  }
+
+  /**
+   * 启动加载序列
+   */
+  startLoadingSequence() {
+    this.loadingOverlay.style.display = 'flex';
+    this.systemLogs.innerHTML = ''; // 清空日志
+    this.addSystemLog('> 初始化上传序列...');
+    
+    let progress = 0;
+    const stages = [
+      { p: 15, text: '正在加密生物识别数据...', log: '> 加密数据包 [SHA-512]...' },
+      { p: 30, text: '连接神经网络...', log: '> 建立安全上行链路...' },
+      { p: 45, text: '传输图像数据...', log: '> 上传图像流...' },
+      { p: 60, text: '分析面部特征...', log: '> 运行识别算法...' },
+      { p: 75, text: '搜索全球数据库...', log: '> 查询名人记录...' },
+      { p: 85, text: '生成最终结果...', log: '> 编译分析报告...' },
+      { p: 90, text: '准备显示界面...', log: '> 渲染 HUD 界面...' }
+    ];
+
+    let currentStage = 0;
+
+    // 清除旧的 interval
+    if (this.loadingInterval) clearInterval(this.loadingInterval);
+
+    this.loadingInterval = setInterval(() => {
+      // 缓慢增加进度
+      if (progress < 95) {
+        progress += Math.random() * 2;
+        if (progress > 95) progress = 95;
+      }
+
+      // 更新进度条 UI
+      this.updateLoadingUI(progress);
+
+      // 检查是否达到下一阶段
+      if (currentStage < stages.length && progress >= stages[currentStage].p) {
+        const stage = stages[currentStage];
+        this.loadingText.textContent = stage.text;
+        this.loadingText.setAttribute('data-text', stage.text); // For glitch effect
+        this.addSystemLog(stage.log);
+        currentStage++;
+      }
+    }, 100);
+  }
+
+  /**
+   * 更新加载 UI
+   */
+  updateLoadingUI(percent) {
+    const p = Math.floor(percent);
+    if (this.loadingBar) this.loadingBar.style.width = `${p}%`;
+    if (this.loadingPercent) this.loadingPercent.textContent = `${p}%`;
+  }
+
+  /**
+   * 添加系统日志
+   */
+  addSystemLog(message) {
+    if (!this.systemLogs) return;
+    
+    const div = document.createElement('div');
+    div.className = 'log-line';
+    div.textContent = message;
+    this.systemLogs.appendChild(div);
+    
+    // 自动滚动到底部
+    this.systemLogs.scrollTop = this.systemLogs.scrollHeight;
+  }
+
+  /**
+   * 完成加载
+   */
+  completeLoading() {
+    if (this.loadingInterval) clearInterval(this.loadingInterval);
+    this.updateLoadingUI(100);
+    this.loadingText.textContent = '分析完成';
+    this.loadingText.setAttribute('data-text', '分析完成');
+    this.addSystemLog('> 成功。正在重定向...');
+  }
+
+  /**
+   * 隐藏加载动画
+   */
+  hideLoading() {
+    if (this.loadingInterval) clearInterval(this.loadingInterval);
+    this.loadingOverlay.style.display = 'none';
   }
 
   /**
@@ -394,18 +496,11 @@ class WebcamController {
   }
 
   /**
-   * 显示加载动画
+   * 显示加载动画 (Deprecated: Use startLoadingSequence)
    */
   showLoading(text) {
-    this.loadingText.textContent = text || this.t('loading', '加载中...');
-    this.loadingOverlay.style.display = 'flex';
-  }
-
-  /**
-   * 隐藏加载动画
-   */
-  hideLoading() {
-    this.loadingOverlay.style.display = 'none';
+    // Keep for backward compatibility if needed
+    this.startLoadingSequence();
   }
 
   /**

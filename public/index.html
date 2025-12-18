@@ -102,9 +102,28 @@
 
     <!-- 加载动画 -->
     <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+      <div class="cyber-grid-bg"></div>
       <div class="loading-content">
-        <div class="loading-spinner"></div>
-        <p class="loading-text" id="loadingText" data-i18n="processing">PROCESSING BIOMETRICS...</p>
+        <div class="cyber-loader">
+          <div class="loader-ring outer"></div>
+          <div class="loader-ring middle"></div>
+          <div class="loader-ring inner"></div>
+          <div class="loader-core">
+            <span class="icon">👁️</span>
+          </div>
+        </div>
+        
+        <div class="loading-status">
+          <p class="loading-text glitch-text" id="loadingText" data-text="正在处理生物识别数据...">正在处理生物识别数据...</p>
+          <div class="loading-bar-container">
+            <div class="loading-bar" id="loadingBar"></div>
+          </div>
+          <div class="loading-percent" id="loadingPercent">0%</div>
+        </div>
+        
+        <div class="system-logs" id="systemLogs">
+          <!-- Logs will be injected by JS -->
+        </div>
       </div>
     </div>
 
