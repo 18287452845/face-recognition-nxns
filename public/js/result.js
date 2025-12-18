@@ -208,22 +208,36 @@ class ResultPage {
     this.setTextContent('celebrityName', celebrity.name);
     this.setTextContent('similarity', `${celebrity.similarity}%`);
 
+    const celebrityPhotoNameEl = document.getElementById('celebrityPhotoName');
+    if (celebrityPhotoNameEl) {
+      celebrityPhotoNameEl.textContent = celebrity.name || '';
+    }
+
     // 匹配原因
     this.typewriterEffect('matchReason', celebrity.matchReason, 50);
 
-    // 明星照片
+    // 明星照片（确保一定有图：若加载失败则回退到 SVG 占位图）
     const celebrityPhotoEl = document.getElementById('celebrityPhoto');
+    if (!celebrityPhotoEl) return;
+
+    const setFallback = () => {
+      celebrityPhotoEl.src = 'data:image/svg+xml;base64,' + btoa(`
+        <svg width="250" height="300" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100%" height="100%" fill="#0a0a1a"/>
+          <text x="50%" y="50%" fill="#00f7ff" text-anchor="middle" font-size="16">${celebrity.name || '明星'}</text>
+        </svg>
+      `);
+    };
+
     if (celebrity.photo) {
       celebrityPhotoEl.src = celebrity.photo;
-      celebrityPhotoEl.onerror = () => {
-        celebrityPhotoEl.src = 'data:image/svg+xml;base64,' + btoa(`
-          <svg width="250" height="300" xmlns="http://www.w3.org/2000/svg">
-            <rect width="100%" height="100%" fill="#0a0a1a"/>
-            <text x="50%" y="50%" fill="#00f7ff" text-anchor="middle" font-size="16">${celebrity.name}</text>
-          </svg>
-        `);
-      };
+    } else {
+      setFallback();
     }
+
+    celebrityPhotoEl.onerror = () => {
+      setFallback();
+    };
   }
 
   /**
