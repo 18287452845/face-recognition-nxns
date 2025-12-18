@@ -28,6 +28,9 @@ logs
 # Uploads directory
 uploads/
 
+# Cache directory
+cache/celebrity-photos/
+
 # Claude settings
 .claude/settings.local.json
 

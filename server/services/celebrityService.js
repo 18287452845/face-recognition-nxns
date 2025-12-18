@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const config = require('../config');
 const ImageUtils = require('../utils/imageUtils');
 const { AppError } = require('../middleware/errorHandler');
+const ImageScraperService = require('./imageScraperService');
 
 const PUBLIC_DIR = path.join(__dirname, '../../public');
 
@@ -47,6 +48,7 @@ class CelebrityService {
     this.celebrityCache = null;
     this.lastCacheUpdate = 0;
     this.cacheUpdateInterval = 5 * 60 * 1000; // 5分钟更新一次缓存
+    this.imageScraper = new ImageScraperService();
   }
 
   normalizeGender(gender) {
@@ -188,9 +190,20 @@ class CelebrityService {
         rand
       });
 
+      // 尝试从网络获取明星照片
+      let photoUrl = selectedCelebrity.photoUrl;
+      try {
+        const scrapedPhoto = await this.imageScraper.getCelebrityPhoto(selectedCelebrity.name);
+        if (scrapedPhoto) {
+          photoUrl = scrapedPhoto;
+        }
+      } catch (error) {
+        console.log(`网络获取照片失败，使用本地照片: ${error.message}`);
+      }
+
       return {
         name: selectedCelebrity.name,
-        photo: selectedCelebrity.photoUrl || this.getFallbackPhotoUrl(selectedCelebrity.gender || normalizedGender),
+        photo: photoUrl || this.getFallbackPhotoUrl(selectedCelebrity.gender || normalizedGender),
         similarity,
         description: selectedCelebrity.description || '著名明星',
         matchReason,
