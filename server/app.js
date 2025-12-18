@@ -4,6 +4,7 @@ const path = require('path');
 const config = require('./config');
 const { notFound, globalErrorHandler } = require('./middleware/errorHandler');
 const ImageUtils = require('./utils/imageUtils');
+const ImageScraperService = require('./services/imageScraperService');
 
 // 创建Express应用
 const app = express();
@@ -37,6 +38,7 @@ if (config.nodeEnv === 'development') {
 // 静态文件服务
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/celebrities', express.static(path.join(__dirname, '../celebrities')));
+app.use('/cache', express.static(path.join(__dirname, '../cache')));
 // 禁用默认 index.html，避免与启动页路由冲突
 app.use(express.static(path.join(__dirname, '../public'), { index: false }));
 
@@ -79,9 +81,11 @@ const server = app.listen(config.port, () => {
 });
 
 // 定期清理临时文件（每小时执行一次）
+const imageScraper = new ImageScraperService();
 setInterval(async () => {
   try {
     await ImageUtils.cleanupOldFiles(config.upload.directory);
+    await imageScraper.cleanExpiredCache();
   } catch (error) {
     console.error('自动清理临时文件失败:', error);
   }

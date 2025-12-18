@@ -69,7 +69,6 @@ class ResultPage {
 
     // AI评价
     this.animateScore(analysis.beautyScore);
-    this.typewriterEffect('temperament', analysis.temperament, 50);
     
     // 详细评价
     if (analysis.evaluation) {
