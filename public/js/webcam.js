@@ -115,8 +115,16 @@ class WebcamController {
       // 获取可用的摄像头设备
       await this.getCameraDevices();
 
-      // 显示权限请求模态框
-      this.showPermissionModal();
+      // 检查摄像头权限状态
+      const hasPermission = await this.checkCameraPermission();
+      
+      if (hasPermission) {
+        // 如果已有权限，直接启动摄像头
+        await this.startCamera();
+      } else {
+        // 如果没有权限，显示权限请求模态框
+        this.showPermissionModal();
+      }
 
     } catch (error) {
       console.error('初始化摄像头失败:', error);
@@ -138,6 +146,26 @@ class WebcamController {
       }
     } catch (error) {
       console.error('获取摄像头设备失败:', error);
+    }
+  }
+
+  /**
+   * 检查摄像头权限状态
+   */
+  async checkCameraPermission() {
+    try {
+      // 尝试使用 Permissions API 检查权限状态
+      if (navigator.permissions && navigator.permissions.query) {
+        const permissionStatus = await navigator.permissions.query({ name: 'camera' });
+        return permissionStatus.state === 'granted';
+      }
+      
+      // 如果 Permissions API 不可用，返回 false 以显示权限请求
+      return false;
+    } catch (error) {
+      // 某些浏览器可能不支持 camera 权限查询，返回 false
+      console.log('无法查询摄像头权限状态:', error);
+      return false;
     }
   }
 
