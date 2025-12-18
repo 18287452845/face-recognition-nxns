@@ -12,14 +12,17 @@
     bootTime.textContent = `[${now.toISOString().replace('T', ' ').substring(0, 19)}]`;
   }
 
-  const lines = [
-    'Initializing secure channel... OK',
-    'Loading biometric modules... OK',
-    'Calibrating optical sensor... OK',
-    'Syncing celebrity database... OK',
-    'Preparing HUD renderer... OK',
-    'Establishing AI uplink... OK',
-    'System ready. Awaiting user input.'
+  // Helper for i18n
+  const t = (key) => (window.i18n && window.i18n.t(key)) || key;
+
+  const getLines = () => [
+    t('boot_line_1'),
+    t('boot_line_2'),
+    t('boot_line_3'),
+    t('boot_line_4'),
+    t('boot_line_5'),
+    t('boot_line_6'),
+    t('boot_line_7')
   ];
 
   const appendLine = (text, delayMs) => {
@@ -36,10 +39,12 @@
     }, delayMs);
   };
 
+  // Wait for i18n to be ready if needed, but it should be since it's sync
+  const lines = getLines();
   lines.forEach((line, idx) => appendLine(line, 220 + idx * 320));
 
   const finishBoot = () => {
-    if (bootStatus) bootStatus.textContent = 'ONLINE';
+    if (bootStatus) bootStatus.textContent = t('status_online');
     if (enterBtn) {
       enterBtn.disabled = false;
       enterBtn.focus({ preventScroll: true });

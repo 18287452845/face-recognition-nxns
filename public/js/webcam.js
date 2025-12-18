@@ -41,6 +41,11 @@ class WebcamController {
     this.init();
   }
 
+  // Helper for i18n
+  t(key, defaultText) {
+    return (window.i18n && window.i18n.t(key)) || defaultText;
+  }
+
   /**
    * 初始化事件监听器
    */
@@ -104,7 +109,7 @@ class WebcamController {
     try {
       // 检查浏览器是否支持getUserMedia
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error('您的浏览器不支持摄像头功能');
+        throw new Error(this.t('browser_no_cam', '您的浏览器不支持摄像头功能'));
       }
 
       // 获取可用的摄像头设备
@@ -115,7 +120,7 @@ class WebcamController {
 
     } catch (error) {
       console.error('初始化摄像头失败:', error);
-      this.showError('无法访问摄像头，请检查权限设置');
+      this.showError(this.t('cam_access_error', '无法访问摄像头，请检查权限设置'));
     }
   }
 
@@ -141,7 +146,7 @@ class WebcamController {
    */
   async startCamera(deviceId = null) {
     try {
-      this.showStatus('正在启动摄像头...');
+      this.showStatus(this.t('starting_cam', '正在启动摄像头...'));
 
       const constraints = {
         video: deviceId
@@ -171,7 +176,7 @@ class WebcamController {
 
     } catch (error) {
       console.error('启动摄像头失败:', error);
-      this.showStatus('摄像头启动失败，请检查权限');
+      this.showStatus(this.t('cam_start_fail', '摄像头启动失败，请检查权限'));
       this.captureBtn.disabled = true;
       this.captureBtn.classList.add('disabled');
     }
@@ -275,20 +280,22 @@ class WebcamController {
    */
   async analyzeImage() {
     if (!this.currentImageData) {
-      this.showError('请先拍照或上传照片');
+      this.showError(this.t('capture_first', '请先拍照或上传照片'));
       return;
     }
 
-    this.showLoading('正在分析人脸特征...');
+    this.showLoading(this.t('analyzing', '正在分析人脸特征...'));
 
     try {
+      const lang = window.i18n ? window.i18n.getLanguage() : 'zh-CN';
       const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          imageBase64: this.currentImageData
+          imageBase64: this.currentImageData,
+          lang: lang
         })
       });
 
@@ -306,11 +313,11 @@ class WebcamController {
         // 跳转到结果页
         window.location.href = '/result';
       } else {
-        this.showError(result.message || '分析失败');
+        this.showError(result.message || this.t('analysis_failed', '分析失败'));
       }
     } catch (error) {
       console.error('分析请求失败:', error);
-      this.showError('网络错误，请稍后重试');
+      this.showError(this.t('network_error', '网络错误，请稍后重试'));
     } finally {
       this.hideLoading();
     }
@@ -325,13 +332,13 @@ class WebcamController {
 
     // 验证文件类型
     if (!file.type.startsWith('image/')) {
-      this.showError('请选择图片文件');
+      this.showError(this.t('select_image', '请选择图片文件'));
       return;
     }
 
     // 验证文件大小（10MB）
     if (file.size > 10 * 1024 * 1024) {
-      this.showError('图片大小不能超过10MB');
+      this.showError(this.t('image_too_large', '图片大小不能超过10MB'));
       return;
     }
 
@@ -361,8 +368,8 @@ class WebcamController {
   /**
    * 显示加载动画
    */
-  showLoading(text = '加载中...') {
-    this.loadingText.textContent = text;
+  showLoading(text) {
+    this.loadingText.textContent = text || this.t('loading', '加载中...');
     this.loadingOverlay.style.display = 'flex';
   }
 

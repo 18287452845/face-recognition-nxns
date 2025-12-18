@@ -16,12 +16,13 @@ class FaceAnalysisService {
   /**
    * 分析人脸图片
    * @param {string} imageBase64 - Base64编码的图片
+   * @param {string} lang - 语言 (zh-CN/en)
    * @returns {Promise<Object>} 完整的分析结果
    */
-  async analyzeFace(imageBase64) {
+  async analyzeFace(imageBase64, lang = 'zh-CN') {
     try {
       // 检查缓存
-      const cacheKey = this.generateCacheKey(imageBase64);
+      const cacheKey = this.generateCacheKey(imageBase64, lang);
       if (this.analysisCache.has(cacheKey)) {
         return this.analysisCache.get(cacheKey);
       }
@@ -32,17 +33,17 @@ class FaceAnalysisService {
       // 验证图片是否包含人脸
       const hasFace = await ImageUtils.detectFace(imageBuffer);
       if (!hasFace) {
-        throw new AppError('图片中未检测到清晰的人脸', 400);
+        throw new AppError(lang === 'en' ? 'No clear face detected in the image' : '图片中未检测到清晰的人脸', 400);
       }
 
       // 先执行AI分析
-      const analysisResult = await this.aiService.analyzeFace(imageBase64);
+      const analysisResult = await this.aiService.analyzeFace(imageBase64, lang);
 
       // 然后根据分析结果进行名人匹配
-      const celebrityMatch = await this.celebrityService.matchCelebrity(imageBase64, analysisResult);
+      const celebrityMatch = await this.celebrityService.matchCelebrity(imageBase64, analysisResult, lang);
 
       // 生成健康建议
-      const healthAdvice = this.generateHealthAdvice(analysisResult);
+      const healthAdvice = this.generateHealthAdvice(analysisResult, lang);
       
       // 组装完整结果
       const fullResult = {
@@ -77,10 +78,12 @@ class FaceAnalysisService {
   /**
     * 生成健康建议
     * @param {Object} analysisResult - AI分析结果
+    * @param {string} lang - 语言
     * @returns {Array<string>} 健康建议列表
     */
-  generateHealthAdvice(analysisResult) {
+  generateHealthAdvice(analysisResult, lang = 'zh-CN') {
     const advice = [];
+    const isEnglish = lang === 'en';
 
     // 从AI返回的建议中获取，如果没有则生成
     if (analysisResult.healthAnalysis && analysisResult.healthAnalysis.suggestions &&
@@ -92,43 +95,84 @@ class FaceAnalysisService {
     // 备用方案：基于年龄的建议
     if (analysisResult.age) {
       if (analysisResult.age < 25) {
-        advice.push('保持良好的作息时间，避免熬夜，青春肌肤需要充足睡眠呵护');
-        advice.push('坚持户外运动和健身，增强体质，保持年轻活力');
-        advice.push('均衡饮食，多吃富含抗氧化物的食物，保持肌肤光泽');
+        if (isEnglish) {
+          advice.push('Maintain a good sleep schedule and avoid staying up late. Youthful skin needs sufficient sleep.');
+          advice.push('Stick to outdoor sports and fitness to enhance physical fitness and maintain youthful vitality.');
+          advice.push('Eat a balanced diet rich in antioxidants to keep your skin glowing.');
+        } else {
+          advice.push('保持良好的作息时间，避免熬夜，青春肌肤需要充足睡眠呵护');
+          advice.push('坚持户外运动和健身，增强体质，保持年轻活力');
+          advice.push('均衡饮食，多吃富含抗氧化物的食物，保持肌肤光泽');
+        }
       } else if (analysisResult.age < 40) {
-        advice.push('注意工作与生活的平衡，定期放松身心，适度的压力管理很重要');
-        advice.push('每年定期体检，预防慢性疾病，及早发现及时治疗');
-        advice.push('坚持适度运动，每周至少3次有氧运动，强化心血管功能');
+        if (isEnglish) {
+          advice.push('Pay attention to work-life balance, relax regularly, and manage stress appropriately.');
+          advice.push('Have regular annual checkups to prevent chronic diseases and treat them early.');
+          advice.push('Stick to moderate exercise, at least 3 times a week of aerobic exercise to strengthen cardiovascular function.');
+        } else {
+          advice.push('注意工作与生活的平衡，定期放松身心，适度的压力管理很重要');
+          advice.push('每年定期体检，预防慢性疾病，及早发现及时治疗');
+          advice.push('坚持适度运动，每周至少3次有氧运动，强化心血管功能');
+        }
       } else {
-        advice.push('保持适度的运动量，散步、太极、瑜伽都是很好的选择');
-        advice.push('注意饮食清淡营养均衡，定期体检了解身体状况');
-        advice.push('重视睡眠质量，建立规律的作息，保持精力充沛');
+        if (isEnglish) {
+          advice.push('Maintain a moderate amount of exercise. Walking, Tai Chi, and Yoga are good choices.');
+          advice.push('Pay attention to a light and balanced diet, and have regular checkups to understand your physical condition.');
+          advice.push('Prioritize sleep quality, establish a regular schedule, and keep your energy levels high.');
+        } else {
+          advice.push('保持适度的运动量，散步、太极、瑜伽都是很好的选择');
+          advice.push('注意饮食清淡营养均衡，定期体检了解身体状况');
+          advice.push('重视睡眠质量，建立规律的作息，保持精力充沛');
+        }
       }
     }
 
     // 基于眼镜佩戴的建议
     if (analysisResult.hasGlasses) {
-      advice.push('定期检查视力并更新眼镜度数，注意用眼卫生，每小时休息10分钟');
+      if (isEnglish) {
+        advice.push('Regularly check your vision and update your glasses prescription. Pay attention to eye hygiene and rest for 10 minutes every hour.');
+      } else {
+        advice.push('定期检查视力并更新眼镜度数，注意用眼卫生，每小时休息10分钟');
+      }
     }
 
     // 基于笑容的建议
-    if (analysisResult.smileLevel === '无笑容') {
-      advice.push('保持积极乐观的心态，经常微笑可以释放压力，提升气质');
+    if (analysisResult.smileLevel === '无笑容' || analysisResult.smileLevel === 'No smile') {
+      if (isEnglish) {
+        advice.push('Maintain a positive and optimistic attitude. Smiling often can release stress and improve your temperament.');
+      } else {
+        advice.push('保持积极乐观的心态，经常微笑可以释放压力，提升气质');
+      }
     }
 
     // 基于气色的建议
     if (analysisResult.healthAnalysis && analysisResult.healthAnalysis.complexion) {
-      if (analysisResult.healthAnalysis.complexion.includes('疲态')) {
-        advice.push('保证充足睡眠（7-9小时），定期休息恢复体力');
-        advice.push('多喝水保持身体水分，适当补充营养，增强免疫力');
+      const complexion = analysisResult.healthAnalysis.complexion;
+      // 简单判断包含"疲"字 (Chinese) or "tired"/"fatigue" (English)
+      if (complexion.includes('疲态') || complexion.includes('tired') || complexion.includes('fatigue')) {
+        if (isEnglish) {
+          advice.push('Ensure sufficient sleep (7-9 hours) and rest regularly to recover physical strength.');
+          advice.push('Drink plenty of water to stay hydrated, supplement nutrition appropriately to enhance immunity.');
+        } else {
+          advice.push('保证充足睡眠（7-9小时），定期休息恢复体力');
+          advice.push('多喝水保持身体水分，适当补充营养，增强免疫力');
+        }
       } else {
-        advice.push('气色不错！继续保持目前的生活方式，定期运动');
+        if (isEnglish) {
+          advice.push('Great complexion! Keep up your current lifestyle and exercise regularly.');
+        } else {
+          advice.push('气色不错！继续保持目前的生活方式，定期运动');
+        }
       }
     }
 
     // 确保至少有3条详细建议
     while (advice.length < 3) {
-      advice.push('养成良好生活习惯，保持规律作息，为健康生活奠定坚实基础');
+      if (isEnglish) {
+        advice.push('Develop good living habits and maintain a regular schedule to lay a solid foundation for a healthy life.');
+      } else {
+        advice.push('养成良好生活习惯，保持规律作息，为健康生活奠定坚实基础');
+      }
     }
 
     return advice.slice(0, 4);
@@ -137,12 +181,13 @@ class FaceAnalysisService {
   /**
    * 生成缓存键
    * @param {string} imageBase64 - Base64图片
+   * @param {string} lang - 语言
    * @returns {string} 缓存键
    */
-  generateCacheKey(imageBase64) {
+  generateCacheKey(imageBase64, lang = 'zh-CN') {
     // 使用图片的哈希值作为缓存键
     const crypto = require('crypto');
-    return crypto.createHash('md5').update(imageBase64).digest('hex');
+    return crypto.createHash('md5').update(imageBase64 + lang).digest('hex');
   }
 
   /**

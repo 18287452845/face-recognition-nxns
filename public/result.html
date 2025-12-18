@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NXNS 分析结果 - 云匹配识别系统</title>
+  <title data-i18n="analysis_result_title">NXNS 分析结果 - 云匹配识别系统</title>
   <link rel="stylesheet" href="css/interaction.css">
   <link rel="stylesheet" href="css/result.css">
 </head>
@@ -20,14 +20,14 @@
     <!-- 返回按钮 -->
     <a href="/scan" class="back-button">
       <span class="back-icon">◀</span>
-      <span class="back-text">返回</span>
+      <span class="back-text" data-i18n="back">返回</span>
     </a>
 
     <!-- 头部信息 -->
     <header class="hud-header">
       <div class="header-title">
-        <h1 class="system-name">NXNS 云匹配识别系统</h1>
-        <p class="analysis-status">分析完成</p>
+        <h1 class="system-name" data-i18n="system_title">NXNS 云匹配识别系统</h1>
+        <p class="analysis-status" data-i18n="analysis_complete">分析完成</p>
       </div>
       <div class="timestamp" id="timestamp"></div>
     </header>
@@ -38,7 +38,7 @@
       <section class="photo-comparison">
         <div class="photo-card user-photo">
           <div class="card-header">
-            <span class="card-label">您的照片</span>
+            <span class="card-label" data-i18n="your_photo">您的照片</span>
             <span class="pulse-dot"></span>
           </div>
           <div class="photo-frame">
@@ -53,7 +53,7 @@
 
         <div class="photo-card celebrity-photo">
           <div class="card-header">
-            <span class="card-label">匹配明星</span>
+            <span class="card-label" data-i18n="matched_celeb">匹配明星</span>
             <span class="pulse-dot"></span>
           </div>
           <div class="photo-frame">
@@ -70,23 +70,23 @@
         <div class="data-panel">
           <h2 class="panel-title">
             <span class="panel-icon">👤</span>
-            基础信息
+            <span data-i18n="basic_info">基础信息</span>
           </h2>
           <div class="data-grid">
             <div class="data-item">
-              <span class="data-label">性别</span>
+              <span class="data-label" data-i18n="gender_label">性别</span>
               <span class="data-value" id="gender">-</span>
             </div>
             <div class="data-item">
-              <span class="data-label">年龄</span>
+              <span class="data-label" data-i18n="age_label">年龄</span>
               <span class="data-value" id="age">-</span>
             </div>
             <div class="data-item">
-              <span class="data-label">眼镜</span>
+              <span class="data-label" data-i18n="glasses_label">眼镜</span>
               <span class="data-value" id="glasses">-</span>
             </div>
             <div class="data-item">
-              <span class="data-label">笑容</span>
+              <span class="data-label" data-i18n="smile_label">笑容</span>
               <span class="data-value" id="smile">-</span>
             </div>
           </div>
@@ -96,22 +96,22 @@
         <div class="data-panel">
           <h2 class="panel-title">
             <span class="panel-icon">🤖</span>
-            AI 智能评价
+            <span data-i18n="ai_evaluation">AI 智能评价</span>
           </h2>
           <div class="score-container">
             <div class="score-circle">
               <canvas id="scoreCanvas" width="120" height="120"></canvas>
               <div class="score-text">
                 <span class="score-number" id="beautyScore">-</span>
-                <span class="score-label">颜值评分</span>
+                <span class="score-label" data-i18n="beauty_score">颜值评分</span>
               </div>
             </div>
           </div>
           <div class="evaluation" id="evaluation">
-            <p class="evaluation-text">评价加载中...</p>
+            <p class="evaluation-text" data-i18n="eval_loading">评价加载中...</p>
           </div>
           <div class="facial-features" id="facialFeatures">
-            <p class="features-text">五官分析加载中...</p>
+            <p class="features-text" data-i18n="features_loading">五官分析加载中...</p>
           </div>
         </div>
 
@@ -119,15 +119,15 @@
         <div class="data-panel">
           <h2 class="panel-title">
             <span class="panel-icon">💊</span>
-            健康分析
+            <span data-i18n="health_analysis">健康分析</span>
           </h2>
           <div class="health-data">
             <div class="complexion" id="complexion">
-              <span class="complexion-label">气色：</span>
+              <span class="complexion-label" data-i18n="complexion_label">气色：</span>
               <span class="complexion-value">-</span>
             </div>
             <div class="suggestions" id="suggestions">
-              <div class="suggestion-item">• 建议加载中...</div>
+              <div class="suggestion-item" data-i18n="suggestions_loading">• 建议加载中...</div>
             </div>
           </div>
         </div>
@@ -136,21 +136,21 @@
         <div class="data-panel">
           <h2 class="panel-title">
             <span class="panel-icon">⭐</span>
-            明星匹配
+            <span data-i18n="star_match">明星匹配</span>
           </h2>
           <div class="celebrity-match">
             <div class="match-info">
               <div class="match-name">
-                <span class="name-label">最像的明星：</span>
+                <span class="name-label" data-i18n="most_like_label">最像的明星：</span>
                 <span class="name-value" id="celebrityName">-</span>
               </div>
               <div class="match-similarity">
-                <span class="similarity-label">相似度：</span>
+                <span class="similarity-label" data-i18n="similarity_label">相似度：</span>
                 <span class="similarity-value" id="similarity">-</span>
               </div>
             </div>
             <div class="match-reason" id="matchReason">
-              <span class="reason-text">匹配原因加载中...</span>
+              <span class="reason-text" data-i18n="reason_loading">匹配原因加载中...</span>
             </div>
           </div>
         </div>
@@ -161,11 +161,11 @@
     <footer class="hud-footer">
       <button class="hud-btn primary" id="retakeBtn">
         <span class="btn-icon">🔄</span>
-        <span class="btn-text">重新测试</span>
+        <span class="btn-text" data-i18n="retake_test">重新测试</span>
       </button>
       <button class="hud-btn secondary" id="shareBtn">
         <span class="btn-icon">📤</span>
-        <span class="btn-text">分享结果</span>
+        <span class="btn-text" data-i18n="share_result">分享结果</span>
       </button>
     </footer>
 
@@ -179,11 +179,12 @@
       <div class="loading-scanner">
         <div class="scanner-line"></div>
       </div>
-      <p class="loading-text">正在加载数据...</p>
+      <p class="loading-text" data-i18n="loading_data">正在加载数据...</p>
     </div>
   </div>
 
   <!-- 脚本 -->
+  <script src="js/i18n.js"></script>
   <script src="js/interaction.js"></script>
   <script src="js/result.js"></script>
 </body>

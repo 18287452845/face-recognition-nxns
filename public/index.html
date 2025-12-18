@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NXNS 云匹配识别系统 // SYSTEM ALPHA</title>
+  <title data-i18n="system_title">NXNS 云匹配识别系统 // SYSTEM ALPHA</title>
   <link rel="stylesheet" href="css/interaction.css">
   <link rel="stylesheet" href="css/webcam.css">
 </head>
@@ -23,12 +23,12 @@
     <!-- 返回按钮 -->
     <a href="/start" class="back-button">
       <span class="back-icon">◀</span>
-      <span class="back-text">返回</span>
+      <span class="back-text" data-i18n="back">返回</span>
     </a>
     
     <header class="header">
-      <h1 class="title">NXNS ACCESS TERMINAL</h1>
-      <p class="subtitle">Neural Network Identification System v2.0</p>
+      <h1 class="title" data-i18n="system_title">NXNS ACCESS TERMINAL</h1>
+      <p class="subtitle" data-i18n="subtitle">Neural Network Identification System v2.0</p>
     </header>
 
     <main class="main-content">
@@ -56,7 +56,7 @@
           <!-- 摄像头状态文字 -->
           <div class="camera-status" id="cameraStatus">
             <span class="status-icon">●</span> 
-            <span id="statusText">SYSTEM INITIALIZING...</span>
+            <span id="statusText" data-i18n="initializing">SYSTEM INITIALIZING...</span>
           </div>
         </div>
 
@@ -64,17 +64,17 @@
         <div class="controls">
           <button class="btn btn-primary" id="captureBtn">
             <span class="btn-icon">⚡</span>
-            <span class="btn-text">CAPTURE SCAN</span>
+            <span class="btn-text" data-i18n="capture_scan">CAPTURE SCAN</span>
           </button>
 
           <button class="btn btn-secondary" id="switchCameraBtn" style="display: none;">
             <span class="btn-icon">🔄</span>
-            <span class="btn-text">SWITCH CAM</span>
+            <span class="btn-text" data-i18n="switch_cam">SWITCH CAM</span>
           </button>
 
           <button class="btn btn-secondary" id="uploadBtn">
             <span class="btn-icon">📂</span>
-            <span class="btn-text">UPLOAD DATA</span>
+            <span class="btn-text" data-i18n="upload_data">UPLOAD DATA</span>
           </button>
 
           <input type="file" id="fileInput" accept="image/*" style="display: none;">
@@ -94,12 +94,12 @@
           <div class="preview-actions">
             <button class="btn btn-primary" id="analyzeBtn">
               <span class="btn-icon">🔍</span>
-              <span class="btn-text">INITIATE ANALYSIS</span>
+              <span class="btn-text" data-i18n="initiate_analysis">INITIATE ANALYSIS</span>
             </button>
 
             <button class="btn btn-secondary" id="retakeBtn">
               <span class="btn-icon">↺</span>
-              <span class="btn-text">DISCARD</span>
+              <span class="btn-text" data-i18n="discard">DISCARD</span>
             </button>
           </div>
         </div>
@@ -110,7 +110,7 @@
     <div class="loading-overlay" id="loadingOverlay" style="display: none;">
       <div class="loading-content">
         <div class="loading-spinner"></div>
-        <p class="loading-text" id="loadingText">PROCESSING BIOMETRICS...</p>
+        <p class="loading-text" id="loadingText" data-i18n="processing">PROCESSING BIOMETRICS...</p>
       </div>
     </div>
 
@@ -126,17 +126,18 @@
     <!-- 权限请求弹窗 -->
     <div class="permission-modal" id="permissionModal" style="display: none;">
       <div class="modal-content">
-        <h2>CAMERA ACCESS REQUIRED</h2>
-        <p>Biometric scanner requires optical sensor access for identification.</p>
+        <h2 data-i18n="camera_access_required">CAMERA ACCESS REQUIRED</h2>
+        <p data-i18n="camera_desc">Biometric scanner requires optical sensor access for identification.</p>
         <div class="modal-actions">
-          <button class="btn btn-primary" id="allowCameraBtn">GRANT ACCESS</button>
-          <button class="btn btn-secondary" id="denyCameraBtn">MANUAL UPLOAD</button>
+          <button class="btn btn-primary" id="allowCameraBtn" data-i18n="grant_access">GRANT ACCESS</button>
+          <button class="btn btn-secondary" id="denyCameraBtn" data-i18n="manual_upload">MANUAL UPLOAD</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- 脚本 -->
+  <script src="js/i18n.js"></script>
   <script src="js/interaction.js"></script>
   <script src="js/webcam.js"></script>
   <script src="js/upload.js"></script>
