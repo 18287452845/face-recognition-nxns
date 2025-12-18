@@ -23,11 +23,39 @@ class AiService {
   /**
    * 调用阿里云百炼API进行人脸分析
    * @param {string} imageBase64 - Base64编码的图片
+   * @param {string} lang - 语言 (zh-CN/en)
    * @returns {Promise<Object>} 分析结果
    */
-  async analyzeFace(imageBase64) {
+  async analyzeFace(imageBase64, lang = 'zh-CN') {
     try {
-      const prompt = `请分析这张人脸照片，以JSON格式返回以下信息。评价内容请只包含正面和赞美的内容，要详细具体：
+      const isEnglish = lang === 'en';
+      
+      let prompt;
+      if (isEnglish) {
+        prompt = `Please analyze this face photo and return the following information in JSON format. The evaluation content should only contain positive and praising content, and be detailed and specific.
+{
+  "gender": "Male/Female",
+  "age": number,
+  "hasGlasses": true/false,
+  "smileLevel": "No smile/Smile/Big laugh",
+  "beautyScore": number 1-100,
+  "evaluation": "2-3 sentences of detailed positive evaluation and praise, including temperament, complexion, overall impression, etc. (e.g., eyes are vivid and deep, exuding intellectual temperament, facial features are exquisite and three-dimensional, aura is noble and elegant, overall image is outstanding and charming)",
+  "facialFeatures": "Detailed praise description of facial features (e.g., bright eyes, deep eye contours, straight nose bridge, corners of the mouth turned up, etc.)",
+  "healthAnalysis": {
+    "complexion": "Positive description and praise of complexion (e.g., ruddy and shiny/delicate and energetic skin/even and healthy skin tone)",
+    "skinCondition": "Positive description of skin condition (e.g., smooth and delicate skin/clear facial contours/plump skin texture)",
+    "suggestions": [
+      "Detailed health advice based on age and health status 1",
+      "Health advice based on temperament and posture 2", 
+      "Health advice based on overall condition 3",
+      "Additional lifestyle advice 4"
+    ],
+    "strengthPoints": ["Strength 1", "Strength 2", "Strength 3"]
+  }
+}
+Only return JSON, no other text.`;
+      } else {
+        prompt = `请分析这张人脸照片，以JSON格式返回以下信息。评价内容请只包含正面和赞美的内容，要详细具体：
 {
   "gender": "男/女",
   "age": 数字,
@@ -49,6 +77,7 @@ class AiService {
   }
 }
 只返回JSON，不要其他文字。`;
+      }
 
       const payload = {
         model: this.model,

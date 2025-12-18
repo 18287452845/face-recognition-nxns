@@ -62,9 +62,11 @@ class ResultPage {
     const { analysis, celebrity } = this.analysisData;
 
     // 基础信息
+    const isEnglish = window.i18n && window.i18n.getLanguage() === 'en';
+    
     this.setTextContent('gender', this.formatGender(analysis.gender));
-    this.setTextContent('age', `${analysis.age}岁`);
-    this.setTextContent('glasses', analysis.hasGlasses ? '有' : '无');
+    this.setTextContent('age', isEnglish ? `${analysis.age}` : `${analysis.age}岁`);
+    this.setTextContent('glasses', analysis.hasGlasses ? (isEnglish ? 'Yes' : '有') : (isEnglish ? 'No' : '无'));
     this.setTextContent('smile', this.formatSmileLevel(analysis.smileLevel));
 
     // AI评价
@@ -436,7 +438,9 @@ class ResultPage {
   formatGender(gender) {
     const genderMap = {
       '男': '男性',
-      '女': '女性'
+      '女': '女性',
+      'Male': 'Male',
+      'Female': 'Female'
     };
     return genderMap[gender] || gender;
   }
@@ -448,7 +452,10 @@ class ResultPage {
     const smileMap = {
       '无笑容': '无',
       '微笑': '微笑',
-      '开心大笑': '大笑'
+      '开心大笑': '大笑',
+      'No smile': 'None',
+      'Smile': 'Smile',
+      'Big laugh': 'Big Laugh'
     };
     return smileMap[smileLevel] || smileLevel;
   }
@@ -457,9 +464,13 @@ class ResultPage {
    * 分享结果
    */
   shareResults() {
+    const isEnglish = window.i18n && window.i18n.getLanguage() === 'en';
+    
     const shareData = {
-      title: 'NXNS 人脸识别结果',
-      text: `我在 NXNS 进行了人脸识别，颜值评分：${this.analysisData.analysis.beautyScore}分，最像的明星是${this.analysisData.celebrity.name}！`,
+      title: isEnglish ? 'NXNS Analysis Result' : 'NXNS 人脸识别结果',
+      text: isEnglish 
+        ? `I tried NXNS face analysis! My beauty score is ${this.analysisData.analysis.beautyScore}, and I look like ${this.analysisData.celebrity.name}!`
+        : `我在 NXNS 进行了人脸识别，颜值评分：${this.analysisData.analysis.beautyScore}分，最像的明星是${this.analysisData.celebrity.name}！`,
       url: window.location.href
     };
 
@@ -481,14 +492,15 @@ class ResultPage {
    * 备用分享方法
    */
   fallbackShare(shareData) {
+    const isEnglish = window.i18n && window.i18n.getLanguage() === 'en';
     // 复制到剪贴板
     if (navigator.clipboard) {
       navigator.clipboard.writeText(shareData.text + ' ' + shareData.url)
         .then(() => {
-          this.showNotification('分享链接已复制到剪贴板');
+          this.showNotification(isEnglish ? 'Link copied to clipboard' : '分享链接已复制到剪贴板');
         })
         .catch(() => {
-          this.showNotification('复制失败，请手动复制分享内容');
+          this.showNotification(isEnglish ? 'Copy failed, please copy manually' : '复制失败，请手动复制分享内容');
         });
     }
   }

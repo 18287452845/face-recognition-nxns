@@ -83,9 +83,9 @@ class CelebrityService {
     const beautyScore = typeof analysis?.beautyScore === 'number' ? analysis.beautyScore : null;
     const beautyBonus = beautyScore !== null ? Math.max(-3, Math.min(9, Math.round((beautyScore - 60) / 4))) : 0;
 
-    const smileBonus = analysis?.smileLevel === '开心大笑'
+    const smileBonus = (analysis?.smileLevel === '开心大笑' || analysis?.smileLevel === 'Big laugh')
       ? 2
-      : analysis?.smileLevel === '微笑'
+      : (analysis?.smileLevel === '微笑' || analysis?.smileLevel === 'Smile')
         ? 1
         : 0;
 
@@ -96,24 +96,56 @@ class CelebrityService {
     return Math.max(72, Math.min(98, base + beautyBonus + smileBonus + glassesBonus + jitter));
   }
 
-  generateMatchReason({ gender, similarity, analysis, celebrityName, rand }) {
+  generateMatchReason({ gender, similarity, analysis, celebrityName, rand, lang = 'zh-CN' }) {
     const isFemale = gender === 'female';
+    const isEnglish = lang === 'en';
 
     const highlights = [];
-    if (analysis?.smileLevel === '微笑') highlights.push(isFemale ? '温柔的微笑' : '自信的微笑');
-    if (analysis?.smileLevel === '开心大笑') highlights.push(isFemale ? '明亮开朗的笑容' : '阳光爽朗的笑容');
-    if (analysis?.hasGlasses) highlights.push(isFemale ? '戴眼镜的知性气质' : '戴眼镜的沉稳气质');
+    if (analysis?.smileLevel === '微笑' || analysis?.smileLevel === 'Smile') {
+      if (isEnglish) {
+        highlights.push(isFemale ? 'gentle smile' : 'confident smile');
+      } else {
+        highlights.push(isFemale ? '温柔的微笑' : '自信的微笑');
+      }
+    }
+    if (analysis?.smileLevel === '开心大笑' || analysis?.smileLevel === 'Big laugh') {
+      if (isEnglish) {
+        highlights.push(isFemale ? 'bright and cheerful smile' : 'sunny and hearty smile');
+      } else {
+        highlights.push(isFemale ? '明亮开朗的笑容' : '阳光爽朗的笑容');
+      }
+    }
+    if (analysis?.hasGlasses) {
+      if (isEnglish) {
+        highlights.push(isFemale ? 'intellectual temperament with glasses' : 'steady temperament with glasses');
+      } else {
+        highlights.push(isFemale ? '戴眼镜的知性气质' : '戴眼镜的沉稳气质');
+      }
+    }
 
-    const highlight = highlights.length ? highlights[Math.floor(rand() * highlights.length)] : (isFemale ? '灵动的眼神与精致的轮廓' : '坚毅的轮廓与沉稳的气场');
+    const highlight = highlights.length ? highlights[Math.floor(rand() * highlights.length)] : (
+      isEnglish 
+        ? (isFemale ? 'vivid eyes and exquisite contours' : 'resolute contours and steady aura')
+        : (isFemale ? '灵动的眼神与精致的轮廓' : '坚毅的轮廓与沉稳的气场')
+    );
 
     if (similarity >= 92) {
+      if (isEnglish) {
+        return `Very high similarity! You and "${celebrityName}" are highly close in expression and facial features ratio, especially the ${highlight}, giving an overall atmosphere that almost reminds one of the other at a glance.`;
+      }
       return `相似度非常高！你和「${celebrityName}」在神态与五官比例上高度接近，尤其是${highlight}，给人的整体氛围几乎一眼就能联想到对方。`;
     }
 
     if (similarity >= 85) {
+      if (isEnglish) {
+        return `Your facial contours and temperament style are very close to "${celebrityName}", especially the ${highlight}, the overall feeling is quite compatible.`;
+      }
       return `你和「${celebrityName}」的面部轮廓与气质风格很接近，特别是${highlight}，整体给人的感觉相当契合。`;
     }
 
+    if (isEnglish) {
+      return `You have some similarities with "${celebrityName}" in certain details, such as ${highlight}, and the overall temperament also has something in common.`;
+    }
     return `你和「${celebrityName}」在某些细节上有几分相似，例如${highlight}，整体气质也有相通之处。`;
   }
 
@@ -139,9 +171,11 @@ class CelebrityService {
    * 匹配最相似的名人
    * @param {string} imageBase64 - Base64编码的用户图片
    * @param {Object|string|null} analysisOrGender - 分析结果或性别
+   * @param {string} lang - 语言 (zh-CN/en)
    * @returns {Promise<Object>} 匹配结果
    */
-  async matchCelebrity(imageBase64, analysisOrGender = null) {
+  async matchCelebrity(imageBase64, analysisOrGender = null, lang = 'zh-CN') {
+    const isEnglish = lang === 'en';
     try {
       const analysis = typeof analysisOrGender === 'object' && analysisOrGender !== null
         ? analysisOrGender
@@ -171,11 +205,11 @@ class CelebrityService {
 
       if (!celebrities.length) {
         return {
-          name: '神秘明星',
+          name: isEnglish ? 'Mystery Star' : '神秘明星',
           photo: this.getFallbackPhotoUrl(normalizedGender),
           similarity: 0,
-          description: '暂无匹配的明星',
-          matchReason: '暂无可匹配的明星',
+          description: isEnglish ? 'No matching star' : '暂无匹配的明星',
+          matchReason: isEnglish ? 'No matching star found' : '暂无可匹配的明星',
           gender: normalizedGender || 'male'
         };
       }
@@ -187,7 +221,8 @@ class CelebrityService {
         similarity,
         analysis,
         celebrityName: selectedCelebrity.name,
-        rand
+        rand,
+        lang
       });
 
       // 尝试从网络获取明星照片
@@ -200,12 +235,20 @@ class CelebrityService {
       } catch (error) {
         console.log(`网络获取照片失败，使用本地照片: ${error.message}`);
       }
+      
+      // Translate default descriptions
+      let description = selectedCelebrity.description;
+      if (isEnglish) {
+        if (description === '著名明星') description = 'Famous Star';
+        else if (description === '知名女星') description = 'Famous Actress';
+        else if (description === '知名男星') description = 'Famous Actor';
+      }
 
       return {
         name: selectedCelebrity.name,
         photo: photoUrl || this.getFallbackPhotoUrl(selectedCelebrity.gender || normalizedGender),
         similarity,
-        description: selectedCelebrity.description || '著名明星',
+        description: description || (isEnglish ? 'Famous Star' : '著名明星'),
         matchReason,
         gender: selectedCelebrity.gender || normalizedGender || 'male'
       };
@@ -216,11 +259,11 @@ class CelebrityService {
       const normalizedGender = this.normalizeGender(typeof analysisOrGender === 'object' ? analysisOrGender?.gender : analysisOrGender);
 
       return {
-        name: '神秘明星',
+        name: isEnglish ? 'Mystery Star' : '神秘明星',
         photo: this.getFallbackPhotoUrl(normalizedGender),
         similarity: 0,
-        description: '暂无匹配的明星',
-        matchReason: '暂无可匹配的明星',
+        description: isEnglish ? 'No matching star' : '暂无匹配的明星',
+        matchReason: isEnglish ? 'No matching star found' : '暂无可匹配的明星',
         gender: normalizedGender || 'male'
       };
     }

@@ -44,7 +44,7 @@ const startAnalysis = catchAsync(async (req, res) => {
  * 执行人脸分析
  */
 const performAnalysis = catchAsync(async (req, res) => {
-  const { imageBase64 } = req.body;
+  const { imageBase64, lang = 'zh-CN' } = req.body;
 
   if (!imageBase64) {
     const response = error('请提供图片数据', 400);
@@ -53,7 +53,7 @@ const performAnalysis = catchAsync(async (req, res) => {
 
   try {
     // 执行分析
-    const result = await faceAnalysisService.analyzeFace(imageBase64);
+    const result = await faceAnalysisService.analyzeFace(imageBase64, lang);
 
     // 返回分析结果
     const response = success(result, '分析完成');
