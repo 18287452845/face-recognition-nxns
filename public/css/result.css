@@ -387,20 +387,21 @@ body::before {
   font-size: 20px;
 }
 
-/* 数据网格 */
+/* 数据网格 - 适应更多字段 */
 .data-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 8px;
 }
 
 .data-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
+  padding: 6px 10px;
   background: rgba(0, 247, 255, 0.05);
   border-left: 2px solid var(--primary-color);
+  min-height: 32px;
 }
 
 .data-label {

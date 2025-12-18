@@ -68,6 +68,12 @@ class ResultPage {
     this.setTextContent('age', isEnglish ? `${analysis.age}` : `${analysis.age}岁`);
     this.setTextContent('glasses', analysis.hasGlasses ? (isEnglish ? 'Yes' : '有') : (isEnglish ? 'No' : '无'));
     this.setTextContent('smile', this.formatSmileLevel(analysis.smileLevel));
+    
+    // 新增基础信息字段
+    this.setTextContent('faceShape', this.getFaceShapeDescription(analysis.faceShape, isEnglish));
+    this.setTextContent('temperament', this.getTemperamentDescription(analysis.temperament, isEnglish));
+    this.setTextContent('skinTone', this.getSkinToneDescription(analysis.skinTone, analysis.healthAnalysis?.skinCondition, isEnglish));
+    this.setTextContent('charmLevel', this.getCharmLevelDescription(analysis.beautyScore, isEnglish));
 
     // AI评价
     this.animateScore(analysis.beautyScore);
@@ -183,8 +189,25 @@ class ResultPage {
     if (featuresEl) {
       const textEl = featuresEl.querySelector('.features-text');
       if (textEl) {
-        // 直接在段落元素上实现打字机效果
-        const safeText = typeof facialFeatures === 'string' ? facialFeatures : String(facialFeatures ?? '');
+        // 处理可能的对象类型，确保转换为字符串
+        let safeText = '';
+        if (typeof facialFeatures === 'string') {
+          safeText = facialFeatures;
+        } else if (facialFeatures && typeof facialFeatures === 'object') {
+          // 如果是对象，尝试提取有用信息
+          if (facialFeatures.overall || facialFeatures.总体) {
+            safeText = facialFeatures.overall || facialFeatures.总体 || '';
+          } else if (facialFeatures.eyes || facialFeatures.眼睛) {
+            safeText = `眼睛：${facialFeatures.eyes || facialFeatures.眼睛}。整体：${JSON.stringify(facialFeatures).replace(/[{}\[\]"]/g, '').substring(0, 100)}`;
+          } else {
+            // 默认处理：提取对象的值组合成字符串
+            const values = Object.values(facialFeatures).filter(v => typeof v === 'string' && v.trim()).join('。');
+            safeText = values || (facialFeatures.toString && facialFeatures.toString() !== '[object Object]' ? facialFeatures.toString() : '');
+          }
+        } else {
+          safeText = String(facialFeatures ?? '');
+        }
+        
         textEl.textContent = '';
         let index = 0;
         const type = () => {
@@ -458,6 +481,114 @@ class ResultPage {
       'Big laugh': 'Big Laugh'
     };
     return smileMap[smileLevel] || smileLevel;
+  }
+
+  /**
+   * 获取脸型描述
+   */
+  getFaceShapeDescription(faceShape, isEnglish = false) {
+    if (!faceShape) {
+      return isEnglish ? 'Unknown' : '未知';
+    }
+    
+    const faceShapeMap = {
+      // 中文
+      '圆脸': '圆脸',
+      '方脸': '方脸',
+      '长脸': '长脸',
+      '椭圆脸': '椭圆脸',
+      '心形脸': '心形脸',
+      // 英文
+      'Round': 'Round',
+      'Square': 'Square',
+      'Long': 'Long',
+      'Oval': 'Oval',
+      'Heart': 'Heart',
+      'Diamond': 'Diamond'
+    };
+    
+    return faceShapeMap[faceShape] || faceShape;
+  }
+
+  /**
+   * 获取气质描述
+   */
+  getTemperamentDescription(temperament, isEnglish = false) {
+    if (!temperament) {
+      return isEnglish ? 'Elegant' : '优雅';
+    }
+    
+    // 气质通常在 evaluation 字段中提到，这里做一个映射
+    const temperamentMap = {
+      '知性': isEnglish ? 'Intellectual' : '知性',
+      '优雅': isEnglish ? 'Elegant' : '优雅',
+      '活泼': isEnglish ? 'Vibrant' : '活泼',
+      '温和': isEnglish ? 'Gentle' : '温和',
+      '冷艳': isEnglish ? 'Sophisticated' : '冷艳',
+      '甜美': isEnglish ? 'Sweet' : '甜美',
+      '阳光': isEnglish ? 'Sunny' : '阳光',
+      '文艺': isEnglish ? 'Artistic' : '文艺'
+    };
+    
+    return temperamentMap[temperament] || (isEnglish ? 'Charming' : '迷人');
+  }
+
+  /**
+   * 获取肤色描述
+   */
+  getSkinToneDescription(skinTone, skinCondition, isEnglish = false) {
+    if (skinTone) {
+      const skinToneMap = {
+        '白皙': isEnglish ? 'Fair' : '白皙',
+        '健康小麦色': isEnglish ? 'Healthy Tan' : '健康小麦色',
+        '自然肤色': isEnglish ? 'Natural' : '自然肤色',
+        'Fair': 'Fair',
+        'Tan': 'Tan',
+        'Natural': 'Natural'
+      };
+      return skinToneMap[skinTone] || skinTone;
+    }
+    
+    if (skinCondition) {
+      const conditionMap = {
+        '光滑细腻': isEnglish ? 'Smooth' : '光滑细腻',
+        '红润有光泽': isEnglish ? 'Radiant' : '红润有光泽',
+        '细腻有活力': isEnglish ? 'Youthful' : '细腻有活力',
+        '均匀健康': isEnglish ? 'Even' : '均匀健康',
+        'Smooth': 'Smooth',
+        'Radiant': 'Radiant',
+        'Youthful': 'Youthful'
+      };
+      
+      for (const [key, value] of Object.entries(conditionMap)) {
+        if (skinCondition.includes(key)) {
+          return value;
+        }
+      }
+    }
+    
+    return isEnglish ? 'Healthy' : '健康';
+  }
+
+  /**
+   * 获取魅力等级描述
+   */
+  getCharmLevelDescription(beautyScore, isEnglish = false) {
+    if (!beautyScore) {
+      return isEnglish ? 'Charming' : '有魅力';
+    }
+    
+    if (beautyScore >= 90) {
+      return isEnglish ? 'Extremely Charming' : '极具魅力';
+    } else if (beautyScore >= 80) {
+      return isEnglish ? 'Highly Charming' : '很有魅力';
+    } else if (beautyScore >= 70) {
+      return isEnglish ? 'Very Charming' : '很有魅力';
+    } else if (beautyScore >= 60) {
+      return isEnglish ? 'Charming' : '有魅力';
+    } else {
+      return isEnglish ? 'Attractive' : '吸引人';
+    }
   }
 
   /**
