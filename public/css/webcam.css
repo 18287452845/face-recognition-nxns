@@ -219,11 +219,10 @@ body::before {
 /* 人脸扫描框指导 */
 .face-guide {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 220px;
-  height: 280px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   border: 2px solid rgba(0, 255, 136, 0.3);
   border-radius: 4px; /* 更方形的科技感 */
 }
