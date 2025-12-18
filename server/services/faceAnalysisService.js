@@ -39,7 +39,7 @@ class FaceAnalysisService {
       const analysisResult = await this.aiService.analyzeFace(imageBase64);
 
       // 然后根据分析结果进行名人匹配
-      const celebrityMatch = await this.celebrityService.matchCelebrity(imageBase64, analysisResult.gender);
+      const celebrityMatch = await this.celebrityService.matchCelebrity(imageBase64, analysisResult);
 
       // 生成健康建议
       const healthAdvice = this.generateHealthAdvice(analysisResult);

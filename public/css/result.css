@@ -227,6 +227,22 @@ body::before {
   object-fit: cover;
 }
 
+.photo-name-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 6px 8px;
+  background: linear-gradient(180deg, rgba(0, 10, 20, 0), rgba(0, 10, 20, 0.9));
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(0, 247, 255, 0.6);
+  pointer-events: none;
+  z-index: 2;
+}
+
 .scan-line {
   position: absolute;
   top: 0;
@@ -236,6 +252,7 @@ body::before {
   background: var(--primary-color);
   box-shadow: 0 0 10px var(--primary-color);
   animation: scan 3s linear infinite;
+  z-index: 3;
 }
 
 @keyframes scan {
